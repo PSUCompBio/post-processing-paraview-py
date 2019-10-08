@@ -66,6 +66,8 @@ brain0000pvtuDisplay.SetScalarBarVisibility(renderView1, True)
 # update the view to ensure updated data information
 renderView1.Update()
 
+AssignViewToLayout(renderView1)
+
 # get layout
 layout1 = GetLayout()
 
@@ -865,31 +867,6 @@ renderView3.CameraParallelScale = 0.11114327161821357
 SaveScreenshot('./brainstrain.png', layout1, SaveAllViews=1,
     ImageResolution=[2277, 947],
     TransparentBackground=1)
-
-#### saving camera placements for all active views
-
-# current camera placement for renderView2
-renderView2.CameraPosition = [0.0, -0.362302, -0.45702962589717316]
-renderView2.CameraFocalPoint = [0.0, -0.362302, -0.027605]
-renderView2.CameraParallelScale = 0.11114327161821357
-
-# current camera placement for renderView4
-renderView4.CameraPosition = [0.0, 0.06866384170091183, -0.027605]
-renderView4.CameraFocalPoint = [0.0, -0.3637582446472588, -0.027605]
-renderView4.CameraViewUp = [0.0, 0.0, 1.0]
-renderView4.CameraParallelScale = 0.1119190714698733
-
-# current camera placement for renderView1
-renderView1.CameraPosition = [-0.43242208634817064, -0.3637582446472588, -0.027605]
-renderView1.CameraFocalPoint = [0.0, -0.3637582446472588, -0.027605]
-renderView1.CameraViewUp = [0.0, 0.0, 1.0]
-renderView1.CameraParallelScale = 0.1119190714698733
-
-# current camera placement for renderView3
-renderView3.CameraPosition = [-0.42183551419825904, -0.28848410626485527, -0.05940479327795262]
-renderView3.CameraFocalPoint = [2.583493778741474e-16, -0.3623019999999991, -0.027605000000000157]
-renderView3.CameraViewUp = [-0.17572548533082535, -0.983236788701942, 0.04864124945289468]
-renderView3.CameraParallelScale = 0.11114327161821357
 
 #### uncomment the following to render all views
 # RenderAllViews()
