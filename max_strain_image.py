@@ -9,7 +9,7 @@ from paraview.simple import *
 paraview.simple._DisableFirstRenderCameraReset()
 
 # create a new 'XML Partitioned Unstructured Grid Reader'
-brain0000pvtu = XMLPartitionedUnstructuredGridReader(FileName=['./brain.0000.pvtu'])
+brain0000pvtu = XMLPartitionedUnstructuredGridReader(FileName=['results/brain.0000.pvtu'])
 brain0000pvtu.CellArrayStatus = ['PartID', 'AvgStrain', 'ProcID']
 brain0000pvtu.PointArrayStatus = ['Displacements', 'Accelerations', 'Boundary']
 
