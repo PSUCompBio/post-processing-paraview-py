@@ -13,6 +13,8 @@ def main(argv):
     if os.path.exists(datFile):
         print("exists :",datFile)
         isDatFile = True
+    else:
+        print("dat file not found")
 
     reader = vtk.vtkUnstructuredGridReader()
     reader.SetFileName(vtkFile)
@@ -25,7 +27,7 @@ def main(argv):
     tris = vtk.vtkTriangleFilter()
     tris.SetInputConnection(surfaceFilter.GetOutputPort())
     tris.Update()
-    
+
     maxSpheres = []
     minSpheres = []
     if(isDatFile):
@@ -34,9 +36,9 @@ def main(argv):
                 chars = line.split()
                 if chars[0] != "#":
                     MaxStrain,MaxX,MaxY,MaxZ,MaxT,MinStrain,MinX,MinY,MinZ,MinT = line.split()
-                    print(float(MaxX),float(MaxY),float(MaxZ))
-                    print(float(MinX),float(MinY),float(MinZ))
-                    print(MaxX,MaxY,MaxZ,MinX,MinY,MinZ)
+                    # print(float(MaxX),float(MaxY),float(MaxZ))
+                    # print(float(MinX),float(MinY),float(MinZ))
+                    # print(MaxX,MaxY,MaxZ,MinX,MinY,MinZ)
                     # sphere
                     maxSource = vtk.vtkSphereSource()
                     maxSource.SetCenter(float(MaxX),float(MaxY),float(MaxZ))
@@ -71,14 +73,13 @@ def main(argv):
         sphereActor = vtk.vtkActor()
         sphereActor.GetProperty().SetColor(0.0,0.0,1.0)
         sphereActor.SetMapper(mapper)
-        minSpActors.append(sphereActor)  
-
-    colors = vtk.vtkNamedColors()
+        minSpActors.append(sphereActor)
 
     '''One render window, multiple viewports'''
     rw = vtk.vtkRenderWindow()
-    iren = vtk.vtkRenderWindowInteractor()
-    iren.SetRenderWindow(rw)
+    #iren = vtk.vtkRenderWindowInteractor()
+    #iren.SetRenderWindow(rw)
+    renderers = []
     # Define viewport ranges
     xmins = [0, .5, 0, .5]
     xmaxs = [0.5, 1, 0.5, 1]
@@ -88,9 +89,7 @@ def main(argv):
     camera_viewUp = [[0.0,-1.0,0.0],[0.0,-1.0,0.0],[0.0,-1.0,0.0],[0.0,1.0,0.0]]
     for i in range(4):
         ren = vtk.vtkRenderer()
-        rw.AddRenderer(ren)
         ren.SetViewport(xmins[i], ymins[i], xmaxs[i], ymaxs[i])
-
         # Create a mapper and actor
         mapper = vtk.vtkPolyDataMapper()
         mapper.SetInputData(tris.GetOutput())
@@ -110,18 +109,35 @@ def main(argv):
         camera.SetPosition(camera_views[i])
         camera.SetViewUp(camera_viewUp[i])
         ren.ResetCamera()
+        renderers.append(ren)
 
     # Create a renderwindowinteractor
-    iren = vtk.vtkRenderWindowInteractor()
-    style = vtk.vtkInteractorStyleTrackballCamera()
-    iren.SetInteractorStyle(style)
-    iren.SetRenderWindow(rw)
-        
+    # iren = vtk.vtkRenderWindowInteractor()
+    # style = vtk.vtkInteractorStyleTrackballCamera()
+    # iren.SetInteractorStyle(style)
+    # iren.SetRenderWindow(rw)
+
     # Enable user interface interactor
-    iren.Initialize()
+    #iren.Initialize()
     rw.SetWindowName('RW: Multiple ViewPorts')
+    rw.SetSize(400,400)
+    rw.SetOffScreenRendering(1)
+    for ren in renderers:
+        rw.AddRenderer(ren)
     rw.Render()
-    iren.Start()
+    # iren.Start()
+
+    windowToImageFilter = vtk.vtkWindowToImageFilter()
+    windowToImageFilter.SetInput(rw)
+    windowToImageFilter.Update()
+
+    writer = vtk.vtkPNGWriter()
+    dirName = os.path.dirname(vtkFile)
+    imageFile = os.path.join(dirName,"screenshot.png")
+    writer.SetFileName(imageFile)
+    writer.SetInputConnection(windowToImageFilter.GetOutputPort())
+    writer.Write()
+    print("Image Written at : ",imageFile)
 
 
 if __name__ == '__main__':
